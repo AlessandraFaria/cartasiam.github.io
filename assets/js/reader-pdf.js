@@ -38,6 +38,9 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
   let unsub = null;
   let currentComments = [];
   let currentPageNum = 1;
+  let lastMeta = null;
+  let lastImages = null;
+  let resizeTimer = null;
 
   async function init() {
     try {
@@ -60,11 +63,19 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     els.tab.addEventListener('click', () => togglePanel());
     els.panelClose.addEventListener('click', () => togglePanel(false));
     els.commentSubmit.addEventListener('click', submitComment);
+    window.addEventListener('resize', onWindowResize);
 
     const hashId = decodeURIComponent(location.hash.replace('#', ''));
     const start = manifest.find((d) => d.id === hashId) || manifest[0];
     els.select.value = start.id;
     await loadDoc(start.id);
+  }
+
+  function onWindowResize() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(() => {
+      if (lastMeta && lastImages) buildFlip(lastMeta, lastImages, { keepPage: true });
+    }, 200);
   }
 
   function renderEmptyShelf() {
@@ -111,11 +122,14 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       els.sub.textContent = `carregando páginas… ${n}/${pdf.numPages}`;
     }
 
+    lastMeta = meta;
+    lastImages = images;
     buildFlip(meta, images);
     els.sub.textContent = `${meta.title} · ${images.length} página${images.length === 1 ? '' : 's'}`;
   }
 
-  function buildFlip(meta, images) {
+  function buildFlip(meta, images, opts = {}) {
+    const resumePage = opts.keepPage ? currentPageNum : 1;
     if (pageFlip) {
       pageFlip.destroy();
       els.flip.innerHTML = '';
@@ -131,16 +145,20 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       return page;
     });
 
-    const bounds = computeFlipBounds();
+    const size = computeSinglePageSize();
+    els.flip.style.width = `${size.width}px`;
+    els.flip.style.height = `${size.height}px`;
+
     // eslint-disable-next-line no-undef
     pageFlip = new St.PageFlip(els.flip, {
       width: PAGE_W,
       height: PAGE_H,
       size: 'stretch',
-      minWidth: Math.min(240, bounds.maxWidth),
-      maxWidth: bounds.maxWidth,
-      minHeight: Math.min(320, bounds.maxHeight),
-      maxHeight: bounds.maxHeight,
+      autoSize: false,
+      minWidth: size.width,
+      maxWidth: size.width,
+      minHeight: size.height,
+      maxHeight: size.height,
       showCover: false,
       usePortrait: true,
       maxShadowOpacity: 0.5,
@@ -151,8 +169,9 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       updateProgress();
       openPageThread(e.data + 1);
     });
+    if (resumePage > 1) pageFlip.turnToPage(resumePage - 1);
     updateProgress();
-    openPageThread(1);
+    if (!opts.keepPage) openPageThread(1);
 
     els.flip.querySelectorAll('.page-comment-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
@@ -171,14 +190,27 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     els.next.disabled = cur >= total;
   }
 
-  function computeFlipBounds() {
-    const rect = els.stage.getBoundingClientRect();
-    const availW = Math.max(240, rect.width - 8);
-    const availH = Math.max(320, rect.height - 8);
-    return {
-      maxWidth: Math.floor(availW / 2),
-      maxHeight: Math.floor(availH),
-    };
+  // -------------------------------------------------------------------
+  // Calcula o tamanho de UMA página só, do maior jeito possível sem
+  // estourar o espaço visível do navegador (sem gerar rolagem).
+  // -------------------------------------------------------------------
+  function computeSinglePageSize() {
+    const topbar = document.querySelector('.reader-topbar');
+    const controls = document.querySelector('.reader-controls');
+    const chrome = (topbar ? topbar.offsetHeight : 0) + (controls ? controls.offsetHeight : 0);
+    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+    const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+    const availH = Math.max(280, vh - chrome - 24);
+    const availW = Math.max(220, vw - 32);
+
+    const ratio = PAGE_W / PAGE_H;
+    let w = Math.min(availW, 560);
+    let h = w / ratio;
+    if (h > availH) {
+      h = availH;
+      w = h * ratio;
+    }
+    return { width: Math.floor(w), height: Math.floor(h) };
   }
 
   async function openPageThread(pageNum) {

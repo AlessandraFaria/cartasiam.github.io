@@ -38,6 +38,9 @@ let allComments = [];
 let pendingSelection = null; // { blockId, start, end, quote }
 let activeBlockId = null;
 let bookOpened = false; // true depois da primeira página aberta nesta sessão
+let lastMeta = null;
+let lastPageGroups = null;
+let resizeTimer = null;
 
 async function init() {
   try {
@@ -70,8 +73,16 @@ async function init() {
   document.addEventListener('touchend', onSelectionMaybe);
   els.popupCancel.addEventListener('click', closePopup);
   els.popupSubmit.addEventListener('click', submitPopupComment);
+  window.addEventListener('resize', onWindowResize);
 
   await loadChapter(start.id);
+}
+
+function onWindowResize() {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => {
+    if (lastMeta && lastPageGroups) mountFlip(lastMeta, lastPageGroups, { showCover: false });
+  }, 200);
 }
 
 async function loadChapter(chapterId) {
@@ -96,24 +107,45 @@ async function loadChapter(chapterId) {
 
   const blocks = markdownToBlocks(markdown, chapterId);
   const pageGroups = paginateBlocks(blocks, PAGE_W, PAGE_H);
+  lastMeta = meta;
+  lastPageGroups = pageGroups;
   const showCover = !bookOpened;
-  const pageElements = buildPageElements(meta, pageGroups, { showCover });
   bookOpened = true;
+  allComments = [];
+  activeBlockId = null;
+
+  mountFlip(meta, pageGroups, { showCover });
+
+  els.sub.textContent = `${meta.title} · ${pageGroups.length} página${pageGroups.length === 1 ? '' : 's'}`;
+
+  await subscribeChapterComments(chapterId);
+}
+
+// ---------------------------------------------------------------------
+// Monta (ou remonta, ao redimensionar) o livro dentro do espaço disponível,
+// sempre mostrando uma página por vez, como um livro de verdade.
+// ---------------------------------------------------------------------
+function mountFlip(meta, pageGroups, opts = {}) {
+  const pageElements = buildPageElements(meta, pageGroups, opts);
+  const size = computeSinglePageSize();
 
   if (pageFlip) {
     pageFlip.destroy();
     els.flip.innerHTML = '';
   }
-  const bounds = computeFlipBounds();
+  els.flip.style.width = `${size.width}px`;
+  els.flip.style.height = `${size.height}px`;
+
   // eslint-disable-next-line no-undef
   pageFlip = new St.PageFlip(els.flip, {
     width: PAGE_W,
     height: PAGE_H,
     size: 'stretch',
-    minWidth: Math.min(220, bounds.maxWidth),
-    maxWidth: bounds.maxWidth,
-    minHeight: Math.min(320, bounds.maxHeight),
-    maxHeight: bounds.maxHeight,
+    autoSize: false,
+    minWidth: size.width,
+    maxWidth: size.width,
+    minHeight: size.height,
+    maxHeight: size.height,
     showCover: true,
     usePortrait: true,
     maxShadowOpacity: 0.5,
@@ -122,10 +154,7 @@ async function loadChapter(chapterId) {
   pageFlip.loadFromHTML(pageElements);
   pageFlip.on('flip', updateProgress);
   updateProgress();
-
-  els.sub.textContent = `${meta.title} · ${pageGroups.length} página${pageGroups.length === 1 ? '' : 's'}`;
-
-  await subscribeChapterComments(chapterId);
+  renderHighlights();
 }
 
 function updateProgress() {
@@ -138,17 +167,26 @@ function updateProgress() {
 }
 
 // ---------------------------------------------------------------------
-// Calcula o tamanho máximo do livro para caber inteiro no espaço visível,
-// sem exigir rolagem da página no navegador.
+// Calcula o tamanho de UMA página só, do maior jeito possível sem
+// estourar o espaço visível do navegador (sem gerar rolagem).
 // ---------------------------------------------------------------------
-function computeFlipBounds() {
-  const rect = els.stage.getBoundingClientRect();
-  const availW = Math.max(240, rect.width - 8);
-  const availH = Math.max(320, rect.height - 8);
-  return {
-    maxWidth: Math.floor(availW / 2), // largura de UMA página (o livro aberto tem duas)
-    maxHeight: Math.floor(availH),
-  };
+function computeSinglePageSize() {
+  const topbar = document.querySelector('.reader-topbar');
+  const controls = document.querySelector('.reader-controls');
+  const chrome = (topbar ? topbar.offsetHeight : 0) + (controls ? controls.offsetHeight : 0);
+  const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
+  const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
+  const availH = Math.max(280, vh - chrome - 24);
+  const availW = Math.max(220, vw - 32);
+
+  const ratio = PAGE_W / PAGE_H;
+  let w = Math.min(availW, 520); // teto de conforto de leitura numa tela bem larga
+  let h = w / ratio;
+  if (h > availH) {
+    h = availH;
+    w = h * ratio;
+  }
+  return { width: Math.floor(w), height: Math.floor(h) };
 }
 
 // ---------------------------------------------------------------------
