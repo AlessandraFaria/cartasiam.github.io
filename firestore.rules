@@ -1,0 +1,30 @@
+rules_version = '2';
+
+// Cole isto em Firebase Console → Firestore Database → Regras.
+//
+// O que isto permite:
+//  - Qualquer visitante pode LER todos os comentários (para que apareçam pra todo mundo).
+//  - Qualquer visitante pode CRIAR um comentário nas condições abaixo.
+//  - Ninguém pode EDITAR ou APAGAR um comentário depois de criado (nem o próprio autor) —
+//    isso evita que uma pessoa mal-intencionada altere comentários de outras.
+//  - O texto tem tamanho limitado, e alguns campos obrigatórios são checados,
+//    como uma primeira barreira simples contra spam automatizado.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /comments/{commentId} {
+      allow read: if true;
+
+      allow create: if
+        request.resource.data.threadId is string &&
+        request.resource.data.threadId.size() > 0 &&
+        request.resource.data.text is string &&
+        request.resource.data.text.size() > 0 &&
+        request.resource.data.text.size() <= 600 &&
+        request.resource.data.authorName is string &&
+        request.resource.data.authorName.size() <= 40;
+
+      allow update, delete: if false;
+    }
+  }
+}

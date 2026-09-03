@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>O Livro — leitura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="reader-page">
+
+  <header class="reader-topbar">
+    <a class="back-link" href="index.html">← estante</a>
+    <h1 class="reader-heading" id="reader-heading">Título do Livro<small id="reader-subheading">carregando…</small></h1>
+    <select class="chapter-select" id="chapter-select" aria-label="Ir para capítulo"></select>
+  </header>
+
+  <div class="reader-stage">
+    <div class="book-shadow-pool"></div>
+    <div id="book-flip"></div>
+  </div>
+
+  <div class="reader-controls">
+    <button class="nav-btn" id="prev-btn" aria-label="Página anterior">‹</button>
+    <span class="reader-progress" id="reader-progress">— / —</span>
+    <button class="nav-btn" id="next-btn" aria-label="Próxima página">›</button>
+  </div>
+
+</div>
+
+<button class="marginalia-tab" id="marginalia-tab" aria-expanded="false">
+  margens<span class="count" id="marginalia-count">0</span>
+</button>
+
+<aside class="marginalia-panel" id="marginalia-panel" aria-label="Comentários desta página">
+  <div class="marginalia-head">
+    <h2>Comentários</h2>
+    <button class="marginalia-close" id="marginalia-close" aria-label="Fechar">✕</button>
+  </div>
+  <div class="marginalia-list" id="marginalia-list">
+    <p class="marginalia-empty">Selecione um trecho do texto para começar um comentário, ou clique num trecho já sublinhado para ler o que outras pessoas escreveram.</p>
+  </div>
+  <div class="marginalia-foot">
+    <p>Comentários são públicos e anônimos. Seja gentil com quem vier depois de você.</p>
+  </div>
+</aside>
+
+<!-- template do popup de novo comentário, posicionado via JS -->
+<div class="comment-popup" id="comment-popup" hidden>
+  <div class="quote-preview" id="popup-quote"></div>
+  <textarea id="popup-text" placeholder="Escreva seu comentário sobre este trecho…" maxlength="600"></textarea>
+  <input type="text" id="popup-name" placeholder="Seu nome (opcional)" maxlength="40">
+  <div class="popup-actions">
+    <button class="btn btn-ghost" id="popup-cancel">cancelar</button>
+    <button class="btn btn-primary" id="popup-submit">comentar</button>
+  </div>
+</div>
+
+<script src="assets/vendor/marked.min.js"></script>
+<script src="assets/vendor/page-flip/page-flip.browser.js"></script>
+<script type="module" src="assets/js/comments.js"></script>
+<script type="module" src="assets/js/reader-livro.js"></script>
+</body>
+</html>
