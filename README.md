@@ -1,8 +1,14 @@
-# O Livro — site
+# Cartas para Iam — site
 
 Um livro que se folheia no navegador, com dois volumes ao lado: as anotações da autora e as ilustrações, ambos em PDF. Qualquer pessoa pode selecionar um trecho do texto (ou uma página de PDF) e deixar um comentário público e anônimo, que fica visível para quem visitar depois.
 
 Feito para ser hospedado de graça no **GitHub Pages** — não precisa de servidor próprio.
+
+## Identidade visual
+
+- **Cor base**: `#540418` (o bordô da capa), acompanhada de Cream `#FFFDD0`, Mahogany `#321912` e Nantucket Breeze `#B7D1EA`, tiradas da cartela Pantone que você mandou. O caderno de anotações usa o rust `#9C4C33` tirado direto da referência "Organized Chaos"; as ilustrações replicam o bordô + estrelas douradas do composition book de referência.
+- **Capa do livro**: a imagem real está em `assets/img/capa-livro.jpg`. Para trocar, basta substituir o arquivo (mantenha o mesmo nome, ou atualize o `src` em `index.html`).
+- **Fontes**: Dreaming Outloud Sans (principal, usada em quase tudo) e Fabello (só no texto corrido dos capítulos). Como são fontes pagas, veja `assets/fonts/README.md` para o passo a passo de como adicioná-las — até lá, o site usa Quicksand e EB Garamond como visual temporário, então nada quebra.
 
 ## Estrutura das pastas
 

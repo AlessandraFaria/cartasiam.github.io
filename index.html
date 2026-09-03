@@ -3,52 +3,52 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>O Livro</title>
-<meta name="description" content="Leia o livro, as anotações da autora e as ilustrações — e deixe seus comentários nas páginas.">
+<title>Cartas para Iam</title>
+<meta name="description" content="Leia Cartas para Iam, as anotações da autora e as ilustrações — e deixe seus comentários nas páginas.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <main class="shelf-page">
   <div class="shelf-header">
-    <span class="shelf-kicker">um livro, suas margens, suas vozes</span>
-    <h1 class="shelf-title">Título do Livro</h1>
-    <p class="shelf-sub">Abra qualquer um dos três volumes abaixo. Selecione uma passagem para deixar um comentário — todo mundo que passar por aqui vai poder ler o que você escreveu.</p>
+    <h1 class="shelf-title">Cartas para Iam</h1>
+    <p class="shelf-sub">Alessandra Abreu · Selecione uma passagem para deixar um comentário — todo mundo que passar por aqui vai poder ler o que você escreveu.</p>
   </div>
 
   <div class="shelf">
-    <a class="cover cover--notes" href="anotacoes.html">
+    <div class="cover-slot cover-slot--side">
       <span class="cover-eyebrow">volume II</span>
-      <div>
-        <svg class="flourish" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9 C 16 -2, 24 20, 32 9 S 48 -2, 62 9"/></svg>
-        <h2 class="cover-title">Anotações<br>da Autora</h2>
-        <p class="cover-desc">Bastidores, rascunhos e reflexões de quem escreveu.</p>
-      </div>
-      <span class="cover-tag">folhear →</span>
-    </a>
+      <a class="cover cover--notes" href="anotacoes.html" aria-label="Abrir Anotações da Autora">
+        <div class="notes-label">
+          <span class="eyebrow">volume II</span>
+          <span class="word">Anotações<br>da Autora</span>
+        </div>
+      </a>
+      <span class="cover-tag" style="background:none;color:var(--text-cream-dim);padding:0;">folhear →</span>
+    </div>
 
-    <a class="cover cover--main" href="livro.html">
+    <div class="cover-slot">
       <span class="cover-eyebrow">volume I</span>
-      <div>
-        <svg class="flourish" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9 C 16 -2, 24 20, 32 9 S 48 -2, 62 9"/></svg>
-        <h2 class="cover-title">Título do Livro</h2>
-        <p class="cover-desc">A obra completa, capítulo a capítulo.</p>
-      </div>
-      <span class="cover-tag">abrir o livro →</span>
-    </a>
+      <a class="cover cover--main" href="livro.html" aria-label="Abrir Cartas para Iam">
+        <img class="cover-art" src="assets/img/capa-livro.jpg" alt="Capa de Cartas para Iam, de Alessandra Abreu">
+        <span class="cover-tag">abrir o livro →</span>
+      </a>
+    </div>
 
-    <a class="cover cover--illustrations" href="ilustracoes.html">
+    <div class="cover-slot cover-slot--side">
       <span class="cover-eyebrow">volume III</span>
-      <div>
-        <svg class="flourish" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9 C 16 -2, 24 20, 32 9 S 48 -2, 62 9"/></svg>
-        <h2 class="cover-title">Ilustrações</h2>
-        <p class="cover-desc">As imagens que acompanham a história.</p>
-      </div>
-      <span class="cover-tag">folhear →</span>
-    </a>
+      <a class="cover cover--illustrations" href="ilustracoes.html" aria-label="Abrir Ilustrações">
+        <div class="illust-label">
+          <strong>ILUSTRAÇÕES</strong>
+          <span class="rule"></span>
+          <span class="rule"></span>
+        </div>
+      </a>
+      <span class="cover-tag" style="background:none;color:var(--text-cream-dim);padding:0;">folhear →</span>
+    </div>
   </div>
 </main>
 

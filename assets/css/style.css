@@ -3,32 +3,65 @@
    Paleta: biblioteca noturna — nada de cream+terracota padrão.
    ========================================================= */
 :root{
-  --ink:            #141d17;
-  --ink-deep:       #0b110d;
-  --ink-soft:       #1d281f;
-  --parchment:      #ece1c6;
-  --parchment-2:    #e2d4ac;
-  --parchment-fold:  #cdb989;
+  /* base do site: burgundy da capa + Pantone board (Cream, Mahogany, Nantucket Breeze) */
+  --wine:           #540418;
+  --wine-bright:    #834a58;
+  --wine-dim:       #36020f;
+
+  --ink:            #20100b;   /* mahogany escurecido — fundo da "biblioteca" */
+  --ink-deep:       #140a07;
+  --ink-soft:       #46312c;
+
+  --cream:          #fffdd0;   /* Pantone "Cream" — páginas do livro */
+  --parchment:      var(--cream);
+  --parchment-2:    #efedc3;
+  --parchment-fold: #d6d4ae;
+
+  --mahogany:       #321912;   /* Pantone "Mahogany" — tinta do texto */
+  --text-ink:       var(--mahogany);
+  --text-ink-soft:  #796854;
+  --text-cream:     var(--cream);
+  --text-cream-dim: #998c75;
+
   --gold:           #b8925a;
   --gold-bright:    #d9b06f;
-  --wine:           #7a2e3d;
-  --wine-bright:    #9c3e4f;
-  --sage:           #55705a;
-  --sage-bright:    #71926f;
-  --brass:          #8a7148;
-  --brass-bright:   #ad8f5c;
-  --text-ink:       #2a2118;
-  --text-ink-soft:  #4a4030;
-  --text-cream:     #ece1c6;
-  --text-cream-dim: #b9ae95;
 
-  --font-display: "Cinzel", "Iowan Old Style", serif;
-  --font-body:    "EB Garamond", "Iowan Old Style", Georgia, serif;
+  --rust:           #9c4c33;   /* do caderno "Organized Chaos" — volume Anotações */
+  --rust-bright:    #b1735f;
+  --rust-dim:       #753926;
+
+  --sky:            #b7d1ea;   /* Pantone "Nantucket Breeze" — acento raro */
+
+  /* Dreaming Outloud Sans é a fonte principal do site.
+     Fabello é usada só no texto corrido dos capítulos (ver .page-inner).
+     Coloque os arquivos das fontes em assets/fonts/ — ver assets/fonts/README.md */
+  --font-display: "Dreaming Outloud Sans", "Quicksand", sans-serif;
+  --font-body:    "Dreaming Outloud Sans", "Quicksand", sans-serif;
+  --font-book:    "Fabello", "EB Garamond", Georgia, serif;
 
   --radius-page: 3px;
   --shadow-book: 0 30px 60px -20px rgba(0,0,0,.65), 0 10px 20px -8px rgba(0,0,0,.5);
 
   --ease: cubic-bezier(.22,.61,.36,1);
+}
+
+@font-face{
+  font-family: "Dreaming Outloud Sans";
+  src: url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Regular.woff2") format("woff2"),
+       url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Regular.woff") format("woff");
+  font-weight: 400; font-style: normal; font-display: swap;
+}
+@font-face{
+  font-family: "Dreaming Outloud Sans";
+  src: url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Bold.woff2") format("woff2"),
+       url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Bold.woff") format("woff");
+  font-weight: 600; font-style: normal; font-display: swap;
+}
+@font-face{
+  font-family: "Fabello";
+  src: url("../fonts/Fabello/Fabello-Regular.woff2") format("woff2"),
+       url("../fonts/Fabello/Fabello-Regular.woff") format("woff");
+  font-weight: 400; font-style: normal; font-display: swap;
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
@@ -105,16 +138,6 @@ button{
 
 .shelf-header{ position:relative; margin-bottom: clamp(2.5rem, 6vw, 5rem); }
 
-.shelf-kicker{
-  display:block;
-  font-family: var(--font-body);
-  font-style: italic;
-  font-size: .95rem;
-  color: var(--text-cream-dim);
-  margin-bottom: .6rem;
-  letter-spacing: .02em;
-}
-
 .shelf-title{
   font-family: var(--font-display);
   font-weight: 500;
@@ -153,83 +176,147 @@ button{
   box-shadow: 0 18px 30px -8px rgba(0,0,0,.6);
 }
 
+.cover-slot{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap: .65rem;
+}
+.cover-slot--side{ align-self:flex-end; margin-bottom: 6px; }
+
+.cover-eyebrow{
+  font-size:.74rem;
+  letter-spacing:.05em;
+  color: var(--text-cream-dim);
+}
+
 .cover{
-  --accent: var(--gold);
   position:relative;
   width: 210px;
   height: 300px;
   border-radius: 4px 8px 8px 4px;
-  background: linear-gradient(155deg, var(--parchment) 0%, var(--parchment-2) 100%);
-  color: var(--text-ink);
-  box-shadow: var(--shadow-book), inset -3px 0 0 rgba(0,0,0,.15);
+  box-shadow: var(--shadow-book);
   transform: rotate(var(--tilt, -2deg));
   transition: transform .45s var(--ease), box-shadow .45s var(--ease);
   display:flex;
   flex-direction:column;
-  align-items:center;
-  justify-content: space-between;
-  padding: 1.6rem 1.1rem 1.4rem;
-  text-align:center;
-  border: 1px solid rgba(0,0,0,.08);
+  overflow:hidden;
 }
 
 .cover--main{ width: 240px; height: 340px; --tilt: 0deg; z-index:2; }
-.cover--notes{ --tilt: -3deg; align-self:flex-end; margin-bottom: 6px; }
-.cover--illustrations{ --tilt: 3deg; align-self:flex-end; margin-bottom: 6px; }
+.cover--notes{ --tilt: -3deg; }
+.cover--illustrations{ --tilt: 3deg; }
 
 .cover:hover, .cover:focus-visible{
   transform: translateY(-10px) rotate(0deg);
   box-shadow: 0 40px 70px -18px rgba(0,0,0,.7), 0 14px 26px -10px rgba(0,0,0,.55);
 }
 
-.cover::before{
-  /* engraved border */
+.cover-tag{
+  position:relative;
+  z-index:2;
+  text-align:center;
+  font-size:.76rem;
+  letter-spacing:.03em;
+  padding: .6rem 0;
+  color: var(--cream);
+  background: rgba(10,4,3,.35);
+}
+
+/* --- volume I: capa real do livro --- */
+.cover--main{ background: var(--ink-deep); }
+.cover-art{
+  width:100%;
+  flex:1;
+  min-height:0;
+  object-fit: cover;
+  object-position: center 22%;
+  display:block;
+}
+
+/* --- volume II: "Anotações da Autora" — caderno espiral rust --- */
+.cover--notes{
+  background: linear-gradient(155deg, var(--rust) 0%, var(--rust-dim) 100%);
+  justify-content:center;
+  align-items:center;
+  padding-left: 20px;
+}
+.cover--notes::before{
+  /* espiral de metal do caderno */
   content:"";
-  position:absolute; inset: 10px;
-  border: 1px solid var(--accent);
-  border-radius: 2px;
-  opacity:.55;
+  position:absolute; left:2px; top:10px; bottom:10px; width:14px;
+  background-image: repeating-linear-gradient(180deg,
+    transparent 0 6px,
+    rgba(20,10,7,.6) 6px 9px);
+  opacity:.85;
+}
+.notes-label{
+  position:relative; z-index:2;
+  text-align:center;
+  color: var(--cream);
+  padding: 0 1rem;
+}
+.notes-label .eyebrow{
+  display:block;
+  font-size:.66rem;
+  letter-spacing:.18em;
+  color: rgba(255,253,208,.6);
+  margin-bottom: .7rem;
+}
+.notes-label .word{
+  display:block;
+  font-size: 1.05rem;
+  letter-spacing:.1em;
+  font-weight: 600;
+  line-height:1.6;
+}
+
+/* --- volume III: "Ilustrações" — composition book bordô + estrelas --- */
+.cover--illustrations{
+  background:
+    radial-gradient(ellipse at 25% 15%, var(--wine-bright) 0%, transparent 55%),
+    linear-gradient(160deg, var(--wine) 0%, var(--wine-dim) 100%);
+  justify-content:center;
+  align-items:center;
+  padding-left: 12px;
+}
+.cover--illustrations::before{
+  content:"";
+  position:absolute; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20100%20100%22%3E%3Cpath%20d%3D%22M%2015.00%2C15.00%20L%2016.40%2C18.60%20L%2020.00%2C20.00%20L%2016.40%2C21.40%20L%2015.00%2C25.00%20L%2013.60%2C21.40%20L%2010.00%2C20.00%20L%2013.60%2C18.60%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.9%22/%3E%3Cpath%20d%3D%22M%2055.00%2C9.00%20L%2055.84%2C11.16%20L%2058.00%2C12.00%20L%2055.84%2C12.84%20L%2055.00%2C15.00%20L%2054.16%2C12.84%20L%2052.00%2C12.00%20L%2054.16%2C11.16%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.7%22/%3E%3Cpath%20d%3D%22M%2080.00%2C39.00%20L%2081.68%2C43.32%20L%2086.00%2C45.00%20L%2081.68%2C46.68%20L%2080.00%2C51.00%20L%2078.32%2C46.68%20L%2074.00%2C45.00%20L%2078.32%2C43.32%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.95%22/%3E%3Cpath%20d%3D%22M%2030.00%2C61.00%20L%2031.12%2C63.88%20L%2034.00%2C65.00%20L%2031.12%2C66.12%20L%2030.00%2C69.00%20L%2028.88%2C66.12%20L%2026.00%2C65.00%20L%2028.88%2C63.88%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.8%22/%3E%3Cpath%20d%3D%22M%2065.00%2C77.00%20L%2065.84%2C79.16%20L%2068.00%2C80.00%20L%2065.84%2C80.84%20L%2065.00%2C83.00%20L%2064.16%2C80.84%20L%2062.00%2C80.00%20L%2064.16%2C79.16%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.65%22/%3E%3Cpath%20d%3D%22M%2090.00%2C12.50%20L%2090.70%2C14.30%20L%2092.50%2C15.00%20L%2090.70%2C15.70%20L%2090.00%2C17.50%20L%2089.30%2C15.70%20L%2087.50%2C15.00%20L%2089.30%2C14.30%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.6%22/%3E%3Cpath%20d%3D%22M%208.00%2C81.80%20L%208.90%2C84.10%20L%2011.20%2C85.00%20L%208.90%2C85.90%20L%208.00%2C88.20%20L%207.10%2C85.90%20L%204.80%2C85.00%20L%207.10%2C84.10%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.75%22/%3E%3Cpath%20d%3D%22M%2048.00%2C48.00%20L%2048.56%2C49.44%20L%2050.00%2C50.00%20L%2048.56%2C50.56%20L%2048.00%2C52.00%20L%2047.44%2C50.56%20L%2046.00%2C50.00%20L%2047.44%2C49.44%20Z%22%20fill%3D%22%23d9b06f%22%20opacity%3D%220.5%22/%3E%3C/svg%3E");
+  background-size: 150px 150px;
   pointer-events:none;
 }
-
-.cover .flourish{ color: var(--accent); }
-
-.cover-eyebrow{
-  font-size:.78rem;
-  color: var(--text-ink-soft);
-  font-style: italic;
+.cover--illustrations::after{
+  /* lombada de pano preta, como no composition book de referência */
+  content:"";
+  position:absolute; left:0; top:0; bottom:0; width:8px;
+  background: linear-gradient(90deg, #0c0c0c, #1e1e1e);
 }
-
-.cover-title{
-  font-family: var(--font-display);
-  font-size: 1.5rem;
-  line-height:1.15;
-  margin: .5rem 0 0;
-  color: var(--text-ink);
+.illust-label{
+  position:relative; z-index:2;
+  background: var(--cream);
+  color: var(--mahogany);
+  border: 2px solid var(--mahogany);
+  border-radius: 4px;
+  padding: .7rem .8rem .65rem;
+  width: 74%;
+  text-align:center;
+  box-shadow: 0 4px 14px rgba(0,0,0,.35);
 }
-.cover--main .cover-title{ font-size: 1.85rem; }
-
-.cover-desc{
-  font-size: .85rem;
-  color: var(--text-ink-soft);
-  line-height:1.45;
-  margin-top: .5rem;
-}
-
-.cover-tag{
-  display:inline-block;
-  margin-top: 1rem;
-  font-size: .78rem;
+.illust-label strong{
+  display:block;
+  font-size:.88rem;
   letter-spacing:.03em;
-  color: var(--accent);
-  border-top: 1px solid var(--accent);
-  padding-top: .5rem;
-  width: 100%;
+  margin-bottom:.5rem;
 }
-
-.cover--notes{ --accent: var(--brass); }
-.cover--illustrations{ --accent: var(--sage); }
-.cover--main{ --accent: var(--wine); }
+.illust-label .rule{
+  display:block;
+  height:1px;
+  background: var(--mahogany);
+  opacity:.3;
+  margin-top:.34rem;
+}
 
 /* =========================================================
    READER CHROME (livro.html, anotacoes.html, ilustracoes.html)
@@ -320,8 +407,9 @@ button{
   height:100%;
   padding: clamp(1.4rem, 4vw, 2.6rem) clamp(1.3rem, 3.6vw, 2.3rem);
   overflow-y:auto;
-  font-size: clamp(.95rem, 1.6vw, 1.08rem);
-  line-height: 1.75;
+  font-family: var(--font-book);
+  font-size: clamp(1rem, 1.7vw, 1.15rem);
+  line-height: 1.9; /* Fabello é script — mais entrelinha ajuda a leitura */
 }
 .page-inner::-webkit-scrollbar{ width:6px; }
 .page-inner::-webkit-scrollbar-thumb{ background: var(--parchment-fold); border-radius:4px; }
@@ -587,7 +675,7 @@ mark.annot.is-active{
   bottom: .6rem;
   right: .8rem;
   font-size: .74rem;
-  color: var(--brass-bright);
+  color: var(--rust-bright);
   border: 1px solid rgba(184,146,90,.35);
   border-radius: 20px;
   padding: .25rem .7rem;
