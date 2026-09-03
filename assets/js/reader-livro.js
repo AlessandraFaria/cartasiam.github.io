@@ -12,6 +12,7 @@ const PAGE_H = 600;
 const els = {
   select: document.getElementById('chapter-select'),
   sub: document.getElementById('reader-subheading'),
+  stage: document.getElementById('reader-stage'),
   flip: document.getElementById('book-flip'),
   prev: document.getElementById('prev-btn'),
   next: document.getElementById('next-btn'),
@@ -36,6 +37,7 @@ let unsub = null;
 let allComments = [];
 let pendingSelection = null; // { blockId, start, end, quote }
 let activeBlockId = null;
+let bookOpened = false; // true depois da primeira página aberta nesta sessão
 
 async function init() {
   try {
@@ -94,21 +96,24 @@ async function loadChapter(chapterId) {
 
   const blocks = markdownToBlocks(markdown, chapterId);
   const pageGroups = paginateBlocks(blocks, PAGE_W, PAGE_H);
-  const pageElements = buildPageElements(meta, pageGroups);
+  const showCover = !bookOpened;
+  const pageElements = buildPageElements(meta, pageGroups, { showCover });
+  bookOpened = true;
 
   if (pageFlip) {
     pageFlip.destroy();
     els.flip.innerHTML = '';
   }
+  const bounds = computeFlipBounds();
   // eslint-disable-next-line no-undef
   pageFlip = new St.PageFlip(els.flip, {
     width: PAGE_W,
     height: PAGE_H,
     size: 'stretch',
-    minWidth: 260,
-    maxWidth: 560,
-    minHeight: 380,
-    maxHeight: 800,
+    minWidth: Math.min(220, bounds.maxWidth),
+    maxWidth: bounds.maxWidth,
+    minHeight: Math.min(320, bounds.maxHeight),
+    maxHeight: bounds.maxHeight,
     showCover: true,
     usePortrait: true,
     maxShadowOpacity: 0.5,
@@ -130,6 +135,20 @@ function updateProgress() {
   els.progress.textContent = `${cur} / ${total}`;
   els.prev.disabled = cur <= 1;
   els.next.disabled = cur >= total;
+}
+
+// ---------------------------------------------------------------------
+// Calcula o tamanho máximo do livro para caber inteiro no espaço visível,
+// sem exigir rolagem da página no navegador.
+// ---------------------------------------------------------------------
+function computeFlipBounds() {
+  const rect = els.stage.getBoundingClientRect();
+  const availW = Math.max(240, rect.width - 8);
+  const availH = Math.max(320, rect.height - 8);
+  return {
+    maxWidth: Math.floor(availW / 2), // largura de UMA página (o livro aberto tem duas)
+    maxHeight: Math.floor(availH),
+  };
 }
 
 // ---------------------------------------------------------------------
@@ -171,8 +190,16 @@ function paginateBlocks(blocks, widthPx, heightPx) {
 // ---------------------------------------------------------------------
 // Monta os elementos <div class="page"> que o PageFlip vai usar
 // ---------------------------------------------------------------------
-function buildPageElements(meta, pageGroups) {
+function buildPageElements(meta, pageGroups, opts = {}) {
   const els_ = [];
+
+  if (opts.showCover) {
+    const bookCover = document.createElement('div');
+    bookCover.className = 'page';
+    bookCover.style.background = '#fff';
+    bookCover.innerHTML = `<img src="assets/img/capa-livro.jpg" alt="Capa de Cartas para Iam, de Alessandra Abreu" style="width:100%;height:100%;object-fit:cover;display:block;">`;
+    els_.push(bookCover);
+  }
 
   const cover = document.createElement('div');
   cover.className = 'page page-cover';

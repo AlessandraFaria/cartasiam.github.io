@@ -13,17 +13,20 @@
 <body>
 
 <main class="shelf-page">
-  <div class="shelf-header">
-    <h1 class="shelf-title">Cartas para Iam</h1>
-    <p class="shelf-sub">Alessandra Abreu · Selecione uma passagem para deixar um comentário — todo mundo que passar por aqui vai poder ler o que você escreveu.</p>
+  <div class="hero-banner">
+    <img src="assets/img/hero-capa.jpg" alt="Cartas para Iam, de Alessandra Abreu. Leitores beta — este é o espaço para leitura e comentários. Selecione uma passagem para deixar um comentário; todo mundo que passar por aqui vai poder ler o que você escreveu.">
   </div>
 
-  <div class="shelf">
+  <div class="shelf-body">
+    <div class="shelf-header visually-hidden">
+      <h1 class="shelf-title">Cartas para Iam</h1>
+      <p class="shelf-sub">Leitores beta · Este é o espaço para leitura e comentários. Selecione uma passagem para deixar um comentário — todo mundo que passar por aqui vai poder ler o que você escreveu.</p>
+    </div>
+
+    <div class="shelf">
     <div class="cover-slot cover-slot--side">
-      <span class="cover-eyebrow">volume II</span>
       <a class="cover cover--notes" href="anotacoes.html" aria-label="Abrir Anotações da Autora">
         <div class="notes-label">
-          <span class="eyebrow">volume II</span>
           <span class="word">Anotações<br>da Autora</span>
         </div>
       </a>
@@ -31,7 +34,6 @@
     </div>
 
     <div class="cover-slot">
-      <span class="cover-eyebrow">volume I</span>
       <a class="cover cover--main" href="livro.html" aria-label="Abrir Cartas para Iam">
         <img class="cover-art" src="assets/img/capa-livro.jpg" alt="Capa de Cartas para Iam, de Alessandra Abreu">
         <span class="cover-tag">abrir o livro →</span>
@@ -39,7 +41,6 @@
     </div>
 
     <div class="cover-slot cover-slot--side">
-      <span class="cover-eyebrow">volume III</span>
       <a class="cover cover--illustrations" href="ilustracoes.html" aria-label="Abrir Ilustrações">
         <div class="illust-label">
           <strong>ILUSTRAÇÕES</strong>
@@ -48,6 +49,7 @@
         </div>
       </a>
       <span class="cover-tag" style="background:none;color:var(--text-cream-dim);padding:0;">folhear →</span>
+    </div>
     </div>
   </div>
 </main>

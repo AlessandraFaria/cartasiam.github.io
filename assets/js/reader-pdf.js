@@ -13,6 +13,7 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
   const els = {
     select: document.getElementById('chapter-select'),
     sub: document.getElementById('reader-subheading'),
+    stage: document.getElementById('reader-stage'),
     flip: document.getElementById('book-flip'),
     prev: document.getElementById('prev-btn'),
     next: document.getElementById('next-btn'),
@@ -69,7 +70,7 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
   function renderEmptyShelf() {
     els.sub.textContent = 'nenhum arquivo cadastrado ainda';
     els.flip.innerHTML = `
-      <div class="page page-cover" style="width:${PAGE_W}px;height:${PAGE_H}px;margin:0 auto;">
+      <div class="page page-cover" style="width:${PAGE_W}px;height:${PAGE_H}px;max-width:100%;max-height:100%;margin:0 auto;">
         <svg class="flourish" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9 C 16 -2, 24 20, 32 9 S 48 -2, 62 9"/></svg>
         <h2>Ainda vazio</h2>
         <p style="max-width:26ch;color:var(--text-ink-soft);font-size:.9rem;">Adicione um PDF na pasta <code>${baseFolder}</code> e cadastre-o em <code>${manifestUrl}</code> para ele aparecer aqui.</p>
@@ -130,15 +131,16 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       return page;
     });
 
+    const bounds = computeFlipBounds();
     // eslint-disable-next-line no-undef
     pageFlip = new St.PageFlip(els.flip, {
       width: PAGE_W,
       height: PAGE_H,
       size: 'stretch',
-      minWidth: 280,
-      maxWidth: 600,
-      minHeight: 380,
-      maxHeight: 820,
+      minWidth: Math.min(240, bounds.maxWidth),
+      maxWidth: bounds.maxWidth,
+      minHeight: Math.min(320, bounds.maxHeight),
+      maxHeight: bounds.maxHeight,
       showCover: false,
       usePortrait: true,
       maxShadowOpacity: 0.5,
@@ -167,6 +169,16 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     els.progress.textContent = `${cur} / ${total}`;
     els.prev.disabled = cur <= 1;
     els.next.disabled = cur >= total;
+  }
+
+  function computeFlipBounds() {
+    const rect = els.stage.getBoundingClientRect();
+    const availW = Math.max(240, rect.width - 8);
+    const availH = Math.max(320, rect.height - 8);
+    return {
+      maxWidth: Math.floor(availW / 2),
+      maxHeight: Math.floor(availH),
+    };
   }
 
   async function openPageThread(pageNum) {

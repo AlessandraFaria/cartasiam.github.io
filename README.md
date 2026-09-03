@@ -6,8 +6,10 @@ Feito para ser hospedado de graça no **GitHub Pages** — não precisa de servi
 
 ## Identidade visual
 
-- **Cor base**: `#540418` (o bordô da capa), acompanhada de Cream `#FFFDD0`, Mahogany `#321912` e Nantucket Breeze `#B7D1EA`, tiradas da cartela Pantone que você mandou. O caderno de anotações usa o rust `#9C4C33` tirado direto da referência "Organized Chaos"; as ilustrações replicam o bordô + estrelas douradas do composition book de referência.
-- **Capa do livro**: a imagem real está em `assets/img/capa-livro.jpg`. Para trocar, basta substituir o arquivo (mantenha o mesmo nome, ou atualize o `src` em `index.html`).
+- **Cor de fundo**: `#F1C9D2` (o rosa da arte da página inicial) — é o fundo do site inteiro, inclusive dentro dos leitores. As páginas do livro em si continuam num papel creme (`#FFFDD0`), pra parecer um livro de verdade pousado sobre o fundo rosa.
+- **Imagem de topo da página inicial**: `assets/img/hero-capa.jpg` — a arte com o título, o laço e os elementos decorativos. Pra trocar, substitua o arquivo (mesmo nome) ou atualize o `src` em `index.html`. O título e o subtítulo também existem como texto real (invisível, sobre a imagem) para acessibilidade e buscadores — atualize os dois em conjunto se mudar o texto.
+- **Capa do livro**: a imagem real está em `assets/img/capa-livro.jpg`.
+- **Acentos**: bordô `#540418` (títulos, botões, capa), rust `#9C4C33` (caderno de anotações) e dourado `#B8925A` (frisos), todos tirados das referências que você mandou.
 - **Fontes**: Dreaming Outloud Sans (principal, usada em quase tudo) e Fabello (só no texto corrido dos capítulos). Como são fontes pagas, veja `assets/fonts/README.md` para o passo a passo de como adicioná-las — até lá, o site usa Quicksand e EB Garamond como visual temporário, então nada quebra.
 
 ## Estrutura das pastas
