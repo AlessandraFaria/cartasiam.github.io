@@ -33,11 +33,13 @@
   --sky:            #b7d1ea;   /* Pantone "Nantucket Breeze" — acento raro */
 
   /* Dreaming Outloud Sans é a fonte principal do site.
-     Fabello é usada só no texto corrido dos capítulos (ver .page-inner).
-     Coloque os arquivos das fontes em assets/fonts/ — ver assets/fonts/README.md */
+     O texto dos capítulos usa a mesma família e ritmo de leitura do Claude.ai
+     (serif calma, entrelinha generosa) — a fonte exata da Anthropic é proprietária,
+     então uso Georgia, o substituto público recomendado pra quem não tem acesso a ela.
+     Coloque os arquivos da Dreaming Outloud Sans em assets/fonts/ — ver assets/fonts/README.md */
   --font-display: "Dreaming Outloud Sans", "Quicksand", sans-serif;
   --font-body:    "Dreaming Outloud Sans", "Quicksand", sans-serif;
-  --font-book:    "Fabello", "EB Garamond", Georgia, serif;
+  --font-book:    Georgia, "Iowan Old Style", "Times New Roman", serif;
 
   --radius-page: 3px;
   --shadow-book: 0 30px 60px -20px rgba(0,0,0,.65), 0 10px 20px -8px rgba(0,0,0,.5);
@@ -56,12 +58,6 @@
   src: url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Bold.woff2") format("woff2"),
        url("../fonts/DreamingOutloudSans/DreamingOutloudSans-Bold.woff") format("woff");
   font-weight: 600; font-style: normal; font-display: swap;
-}
-@font-face{
-  font-family: "Fabello";
-  src: url("../fonts/Fabello/Fabello-Regular.woff2") format("woff2"),
-       url("../fonts/Fabello/Fabello-Regular.woff") format("woff");
-  font-weight: 400; font-style: normal; font-display: swap;
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
@@ -413,8 +409,8 @@ button{
   padding: clamp(1.4rem, 4vw, 2.6rem) clamp(1.3rem, 3.6vw, 2.3rem);
   overflow-y:auto;
   font-family: var(--font-book);
-  font-size: clamp(1rem, 1.7vw, 1.15rem);
-  line-height: 1.9; /* Fabello é script — mais entrelinha ajuda a leitura */
+  font-size: clamp(.95rem, 1.4vw, 1.05rem);
+  line-height: 1.7; /* ritmo de leitura calmo, como o do Claude.ai */
 }
 .page-inner::-webkit-scrollbar{ width:6px; }
 .page-inner::-webkit-scrollbar-thumb{ background: var(--parchment-fold); border-radius:4px; }
@@ -425,7 +421,7 @@ button{
   color: var(--wine);
   line-height:1.2;
 }
-.page-inner p{ margin: 0 0 1em; }
+.page-inner p{ margin: 0 0 1.15em; }
 .page-inner blockquote{
   margin: 1.2em 0;
   padding-left: 1em;
