@@ -1,22 +1,26 @@
 // =====================================================================
-// LEITOR DE PDF (usado por anotações da autora e ilustrações)
-// Renderiza cada página do PDF como imagem e usa o mesmo motor de
-// folhear páginas do livro principal. Comentários são por página.
+// LEITOR DE PDF SIMPLES — rolagem contínua com zoom, como o leitor de
+// PDF nativo do navegador. Usado pelos três volumes (livro, anotações
+// e ilustrações). Comentários são por página.
 // =====================================================================
 import { makeThreadId, subscribeToThread, postComment, formatTimestamp } from './comments.js';
 
-const PAGE_W = 460;
-const PAGE_H = 620;
-const RENDER_SCALE_TARGET_WIDTH = 900;
+const RENDER_SCALE_TARGET_WIDTH = 1400; // resolução-base do render — dá espaço pra dar zoom sem borrar
+const ZOOM_MIN = 0.5;
+const ZOOM_MAX = 2.5;
+const ZOOM_STEP = 1.2;
 
 export function initPdfReader({ book, manifestUrl, baseFolder }) {
   const els = {
     select: document.getElementById('chapter-select'),
     sub: document.getElementById('reader-subheading'),
     stage: document.getElementById('reader-stage'),
-    flip: document.getElementById('book-flip'),
+    scroll: document.getElementById('pdf-scroll'),
     prev: document.getElementById('prev-btn'),
     next: document.getElementById('next-btn'),
+    zoomOut: document.getElementById('zoom-out'),
+    zoomIn: document.getElementById('zoom-in'),
+    zoomLevel: document.getElementById('zoom-level'),
     progress: document.getElementById('reader-progress'),
     tab: document.getElementById('marginalia-tab'),
     count: document.getElementById('marginalia-count'),
@@ -34,13 +38,13 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
 
   let manifest = [];
   let currentDoc = null;
-  let pageFlip = null;
   let unsub = null;
   let currentComments = [];
   let currentPageNum = 1;
-  let lastMeta = null;
-  let lastImages = null;
-  let resizeTimer = null;
+  let totalPages = 0;
+  let baseWidth = 600; // largura de referência (zoom 100%), calculada ao carregar
+  let zoomLevel = 1;
+  let observer = null;
 
   async function init() {
     try {
@@ -52,18 +56,19 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     }
 
     if (!manifest.length) {
-      renderEmptyShelf();
+      renderEmptyState();
       return;
     }
 
     els.select.innerHTML = manifest.map((d) => `<option value="${d.id}">${d.title}</option>`).join('');
     els.select.addEventListener('change', () => loadDoc(els.select.value));
-    els.prev.addEventListener('click', () => pageFlip && pageFlip.flipPrev());
-    els.next.addEventListener('click', () => pageFlip && pageFlip.flipNext());
+    els.prev.addEventListener('click', () => goToPage(currentPageNum - 1));
+    els.next.addEventListener('click', () => goToPage(currentPageNum + 1));
+    els.zoomOut.addEventListener('click', () => setZoom(zoomLevel / ZOOM_STEP));
+    els.zoomIn.addEventListener('click', () => setZoom(zoomLevel * ZOOM_STEP));
     els.tab.addEventListener('click', () => togglePanel());
     els.panelClose.addEventListener('click', () => togglePanel(false));
     els.commentSubmit.addEventListener('click', submitComment);
-    window.addEventListener('resize', onWindowResize);
 
     const hashId = decodeURIComponent(location.hash.replace('#', ''));
     const start = manifest.find((d) => d.id === hashId) || manifest[0];
@@ -71,17 +76,10 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     await loadDoc(start.id);
   }
 
-  function onWindowResize() {
-    clearTimeout(resizeTimer);
-    resizeTimer = setTimeout(() => {
-      if (lastMeta && lastImages) buildFlip(lastMeta, lastImages, { keepPage: true });
-    }, 200);
-  }
-
-  function renderEmptyShelf() {
+  function renderEmptyState() {
     els.sub.textContent = 'nenhum arquivo cadastrado ainda';
-    els.flip.innerHTML = `
-      <div class="page page-cover" style="width:${PAGE_W}px;height:${PAGE_H}px;max-width:100%;max-height:100%;margin:0 auto;">
+    els.scroll.innerHTML = `
+      <div class="page-cover">
         <svg class="flourish" viewBox="0 0 64 18" aria-hidden="true"><path d="M2 9 C 16 -2, 24 20, 32 9 S 48 -2, 62 9"/></svg>
         <h2>Ainda vazio</h2>
         <p style="max-width:26ch;color:var(--text-ink-soft);font-size:.9rem;">Adicione um PDF na pasta <code>${baseFolder}</code> e cadastre-o em <code>${manifestUrl}</code> para ele aparecer aqui.</p>
@@ -95,6 +93,7 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
     location.hash = encodeURIComponent(docId);
     els.select.value = docId;
     els.sub.textContent = 'carregando páginas…';
+    if (observer) observer.disconnect();
 
     let pdf;
     try {
@@ -106,7 +105,13 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       return;
     }
 
-    const images = [];
+    els.scroll.innerHTML = '';
+    totalPages = pdf.numPages;
+    baseWidth = Math.min(700, Math.max(280, els.stage.clientWidth - 32));
+    zoomLevel = 1;
+    updateZoomLabel();
+    els.scroll.style.setProperty('--pdf-page-w', `${baseWidth}px`);
+
     for (let n = 1; n <= pdf.numPages; n++) {
       // eslint-disable-next-line no-await-in-loop
       const page = await pdf.getPage(n);
@@ -118,99 +123,97 @@ export function initPdfReader({ book, manifestUrl, baseFolder }) {
       canvas.height = viewport.height;
       // eslint-disable-next-line no-await-in-loop
       await page.render({ canvasContext: canvas.getContext('2d'), viewport }).promise;
-      images.push(canvas.toDataURL('image/jpeg', 0.86));
+      const src = canvas.toDataURL('image/jpeg', 0.86);
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'pdf-page';
+      wrapper.dataset.page = String(n);
+      wrapper.innerHTML = `
+        <img src="${src}" alt="Página ${n} de ${meta.title}" loading="lazy">
+        <div class="pdf-page-number">${n}</div>
+        <button class="page-comment-btn" data-page="${n}" type="button">comentar</button>`;
+      els.scroll.appendChild(wrapper);
+
       els.sub.textContent = `carregando páginas… ${n}/${pdf.numPages}`;
     }
 
-    lastMeta = meta;
-    lastImages = images;
-    buildFlip(meta, images);
-    els.sub.textContent = `${meta.title} · ${images.length} página${images.length === 1 ? '' : 's'}`;
-  }
+    els.sub.textContent = `${meta.title} · ${totalPages} página${totalPages === 1 ? '' : 's'}`;
 
-  function buildFlip(meta, images, opts = {}) {
-    const resumePage = opts.keepPage ? currentPageNum : 1;
-    if (pageFlip) {
-      pageFlip.destroy();
-      els.flip.innerHTML = '';
-    }
-    const pageEls = images.map((src, i) => {
-      const page = document.createElement('div');
-      page.className = 'page';
-      page.style.background = '#fff';
-      page.innerHTML = `
-        <img src="${src}" alt="Página ${i + 1} de ${meta.title}" style="width:100%;height:100%;object-fit:contain;background:#fff;">
-        <button class="page-comment-btn" data-page="${i + 1}" type="button">comentar</button>
-        <div class="page-number">${i + 1}</div>`;
-      return page;
-    });
-
-    const size = computeSinglePageSize();
-    els.flip.style.width = `${size.width}px`;
-    els.flip.style.height = `${size.height}px`;
-
-    // eslint-disable-next-line no-undef
-    pageFlip = new St.PageFlip(els.flip, {
-      width: PAGE_W,
-      height: PAGE_H,
-      size: 'stretch',
-      autoSize: false,
-      minWidth: size.width,
-      maxWidth: size.width,
-      minHeight: size.height,
-      maxHeight: size.height,
-      showCover: false,
-      usePortrait: true,
-      maxShadowOpacity: 0.5,
-      mobileScrollSupport: false,
-    });
-    pageFlip.loadFromHTML(pageEls);
-    pageFlip.on('flip', (e) => {
-      updateProgress();
-      openPageThread(e.data + 1);
-    });
-    if (resumePage > 1) pageFlip.turnToPage(resumePage - 1);
-    updateProgress();
-    if (!opts.keepPage) openPageThread(1);
-
-    els.flip.querySelectorAll('.page-comment-btn').forEach((btn) => {
+    els.scroll.querySelectorAll('.page-comment-btn').forEach((btn) => {
       btn.addEventListener('click', () => {
-        openPageThread(Number(btn.dataset.page));
+        goToPage(Number(btn.dataset.page), { scroll: false });
         togglePanel(true);
       });
     });
+
+    setupObserver();
+    goToPage(1, { scroll: false });
+    updateProgress();
+  }
+
+  // -------------------------------------------------------------------
+  // Zoom: só muda a largura de referência das páginas — a imagem já foi
+  // renderizada numa resolução alta o bastante pra não borrar.
+  // -------------------------------------------------------------------
+  function setZoom(next) {
+    zoomLevel = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, next));
+    els.scroll.style.setProperty('--pdf-page-w', `${Math.round(baseWidth * zoomLevel)}px`);
+    updateZoomLabel();
+  }
+
+  function updateZoomLabel() {
+    els.zoomLevel.textContent = `${Math.round(zoomLevel * 100)}%`;
+    els.zoomOut.disabled = zoomLevel <= ZOOM_MIN + 0.001;
+    els.zoomIn.disabled = zoomLevel >= ZOOM_MAX - 0.001;
+  }
+
+  // -------------------------------------------------------------------
+  // Navegação: rola até a página pedida. currentPageNum também é
+  // atualizado sozinho enquanto a pessoa rola manualmente (ver observer).
+  // -------------------------------------------------------------------
+  function goToPage(n, opts = {}) {
+    const target = Math.min(totalPages, Math.max(1, n));
+    const el = els.scroll.querySelector(`.pdf-page[data-page="${target}"]`);
+    if (el && opts.scroll !== false) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    if (target !== currentPageNum || opts.force) {
+      openPageThread(target);
+    }
+    updateProgress();
   }
 
   function updateProgress() {
-    if (!pageFlip) return;
-    const cur = pageFlip.getCurrentPageIndex() + 1;
-    const total = pageFlip.getPageCount();
-    els.progress.textContent = `${cur} / ${total}`;
-    els.prev.disabled = cur <= 1;
-    els.next.disabled = cur >= total;
+    els.progress.textContent = totalPages ? `página ${currentPageNum} de ${totalPages}` : '— / —';
+    els.prev.disabled = currentPageNum <= 1;
+    els.next.disabled = currentPageNum >= totalPages;
   }
 
   // -------------------------------------------------------------------
-  // Calcula o tamanho de UMA página só, do maior jeito possível sem
-  // estourar o espaço visível do navegador (sem gerar rolagem).
+  // Detecta qual página está mais visível enquanto a pessoa rola,
+  // pra manter o indicador e o painel de comentários sincronizados.
   // -------------------------------------------------------------------
-  function computeSinglePageSize() {
-    const topbar = document.querySelector('.reader-topbar');
-    const controls = document.querySelector('.reader-controls');
-    const chrome = (topbar ? topbar.offsetHeight : 0) + (controls ? controls.offsetHeight : 0);
-    const vh = (window.visualViewport && window.visualViewport.height) || window.innerHeight;
-    const vw = (window.visualViewport && window.visualViewport.width) || window.innerWidth;
-    const availH = Math.max(280, vh - chrome - 24);
-    const availW = Math.max(220, vw - 32);
-
-    const ratio = PAGE_W / PAGE_H;
-    let w = Math.min(availW, 560);
-    let h = w / ratio;
-    if (h > availH) {
-      h = availH;
-      w = h * ratio;
-    }
-    return { width: Math.floor(w), height: Math.floor(h) };
+  function setupObserver() {
+    if (observer) observer.disconnect();
+    let best = { ratio: 0, page: currentPageNum };
+    observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const n = Number(entry.target.dataset.page);
+          if (entry.isIntersecting && entry.intersectionRatio > best.ratio) {
+            best = { ratio: entry.intersectionRatio, page: n };
+          }
+        }
+        if (best.page !== currentPageNum) {
+          currentPageNum = best.page;
+          updateProgress();
+          openPageThread(currentPageNum);
+        }
+        best = { ratio: 0, page: currentPageNum };
+      },
+      { root: els.stage, threshold: [0, 0.25, 0.5, 0.75, 1] }
+    );
+    els.scroll.querySelectorAll('.pdf-page').forEach((el) => observer.observe(el));
   }
 
   async function openPageThread(pageNum) {

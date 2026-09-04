@@ -13,20 +13,27 @@
 
 <div class="reader-page">
 
-  <aside class="reader-sidebar">
+  <header class="reader-topbar">
     <a class="back-link" href="index.html">← estante</a>
-    <div class="reader-sidebar-title">
-      <h1 class="reader-heading" id="reader-heading">Ilustrações<small id="reader-subheading">carregando…</small></h1>
-    </div>
+    <h1 class="reader-heading" id="reader-heading">Ilustrações<small id="reader-subheading">carregando…</small></h1>
     <select class="chapter-select" id="chapter-select" aria-label="Ir para documento"></select>
-    <span class="reader-progress" id="reader-progress">— / —</span>
-  </aside>
+  </header>
 
   <div class="reader-stage" id="reader-stage">
-    <div class="book-shadow-pool"></div>
-    <button class="nav-btn nav-btn--prev" id="prev-btn" aria-label="Página anterior">‹</button>
-    <div id="book-flip"></div>
-    <button class="nav-btn nav-btn--next" id="next-btn" aria-label="Próxima página">›</button>
+    <div class="pdf-scroll" id="pdf-scroll"></div>
+  </div>
+
+  <div class="reader-controls">
+    <div class="controls-group">
+      <button class="nav-btn" id="prev-btn" aria-label="Página anterior">‹</button>
+      <span class="reader-progress" id="reader-progress">— / —</span>
+      <button class="nav-btn" id="next-btn" aria-label="Próxima página">›</button>
+    </div>
+    <div class="controls-group">
+      <button class="zoom-btn" id="zoom-out" aria-label="Diminuir zoom">−</button>
+      <span class="zoom-level" id="zoom-level">100%</span>
+      <button class="zoom-btn" id="zoom-in" aria-label="Aumentar zoom">+</button>
+    </div>
   </div>
 
 </div>
@@ -52,7 +59,6 @@
 </aside>
 
 <script src="assets/vendor/pdfjs/pdf.min.js"></script>
-<script src="assets/vendor/page-flip/page-flip.browser.js"></script>
 <script type="module" src="assets/js/comments.js"></script>
 <script type="module">
   import { initPdfReader } from './assets/js/reader-pdf.js';
