@@ -16,7 +16,7 @@
   <header class="reader-topbar">
     <a class="back-link" href="index.html">← estante</a>
     <h1 class="reader-heading" id="reader-heading">Cartas para Iam<small id="reader-subheading">carregando…</small></h1>
-    <select class="chapter-select" id="chapter-select" aria-label="Ir para capítulo"></select>
+    <select class="chapter-select" id="chapter-select" aria-label="Ir para parte do livro"></select>
   </header>
 
   <div class="reader-stage" id="reader-stage">
@@ -38,31 +38,26 @@
 
 <aside class="marginalia-panel" id="marginalia-panel" aria-label="Comentários desta página">
   <div class="marginalia-head">
-    <h2>Comentários</h2>
+    <h2>Comentários <span id="marginalia-page-label"></span></h2>
     <button class="marginalia-close" id="marginalia-close" aria-label="Fechar">✕</button>
   </div>
   <div class="marginalia-list" id="marginalia-list">
-    <p class="marginalia-empty">Selecione um trecho do texto para começar um comentário, ou clique num trecho já sublinhado para ler o que outras pessoas escreveram.</p>
+    <p class="marginalia-empty">Ainda não há comentários nesta página. Seja a primeira pessoa a escrever uma.</p>
   </div>
   <div class="marginalia-foot">
-    <p>Comentários são públicos e anônimos. Seja gentil com quem vier depois de você.</p>
+    <textarea id="page-comment-text" placeholder="Comentar esta página…" maxlength="600" style="width:100%;min-height:60px;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.5rem;font-family:var(--font-body);"></textarea>
+    <input type="text" id="page-comment-name" placeholder="Seu nome (opcional)" maxlength="40" style="width:100%;margin-top:.4rem;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.4rem .5rem;font-family:var(--font-body);font-size:.85rem;">
+    <button class="btn btn-primary" id="page-comment-submit" style="margin-top:.5rem;width:100%;">comentar</button>
+    <p style="margin-top:.6rem;">Comentários são públicos e anônimos.</p>
   </div>
 </aside>
 
-<!-- template do popup de novo comentário, posicionado via JS -->
-<div class="comment-popup" id="comment-popup" hidden>
-  <div class="quote-preview" id="popup-quote"></div>
-  <textarea id="popup-text" placeholder="Escreva seu comentário sobre este trecho…" maxlength="600"></textarea>
-  <input type="text" id="popup-name" placeholder="Seu nome (opcional)" maxlength="40">
-  <div class="popup-actions">
-    <button class="btn btn-ghost" id="popup-cancel">cancelar</button>
-    <button class="btn btn-primary" id="popup-submit">comentar</button>
-  </div>
-</div>
-
-<script src="assets/vendor/marked.min.js"></script>
+<script src="assets/vendor/pdfjs/pdf.min.js"></script>
 <script src="assets/vendor/page-flip/page-flip.browser.js"></script>
 <script type="module" src="assets/js/comments.js"></script>
-<script type="module" src="assets/js/reader-livro.js"></script>
+<script type="module">
+  import { initPdfReader } from './assets/js/reader-pdf.js';
+  initPdfReader({ book: 'livro', manifestUrl: 'book/manifest.json', baseFolder: 'book/' });
+</script>
 </body>
 </html>
