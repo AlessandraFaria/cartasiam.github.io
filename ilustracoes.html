@@ -13,21 +13,20 @@
 
 <div class="reader-page">
 
-  <header class="reader-topbar">
+  <aside class="reader-sidebar">
     <a class="back-link" href="index.html">← estante</a>
-    <h1 class="reader-heading" id="reader-heading">Ilustrações<small id="reader-subheading">carregando…</small></h1>
+    <div class="reader-sidebar-title">
+      <h1 class="reader-heading" id="reader-heading">Ilustrações<small id="reader-subheading">carregando…</small></h1>
+    </div>
     <select class="chapter-select" id="chapter-select" aria-label="Ir para documento"></select>
-  </header>
+    <span class="reader-progress" id="reader-progress">— / —</span>
+  </aside>
 
   <div class="reader-stage" id="reader-stage">
     <div class="book-shadow-pool"></div>
+    <button class="nav-btn nav-btn--prev" id="prev-btn" aria-label="Página anterior">‹</button>
     <div id="book-flip"></div>
-  </div>
-
-  <div class="reader-controls">
-    <button class="nav-btn" id="prev-btn" aria-label="Página anterior">‹</button>
-    <span class="reader-progress" id="reader-progress">— / —</span>
-    <button class="nav-btn" id="next-btn" aria-label="Próxima página">›</button>
+    <button class="nav-btn nav-btn--next" id="next-btn" aria-label="Próxima página">›</button>
   </div>
 
 </div>
