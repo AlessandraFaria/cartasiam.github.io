@@ -32,14 +32,10 @@
 
   --sky:            #b7d1ea;   /* Pantone "Nantucket Breeze" — acento raro */
 
-  /* Dreaming Outloud Sans é a fonte principal do site.
-     O texto dos capítulos usa a mesma família e ritmo de leitura do Claude.ai
-     (serif calma, entrelinha generosa) — a fonte exata da Anthropic é proprietária,
-     então uso Georgia, o substituto público recomendado pra quem não tem acesso a ela.
-     Coloque os arquivos da Dreaming Outloud Sans em assets/fonts/ — ver assets/fonts/README.md */
+  /* Dreaming Outloud Sans é a fonte principal do site — usada em quase tudo.
+     Coloque os arquivos em assets/fonts/ — ver assets/fonts/README.md */
   --font-display: "Dreaming Outloud Sans", "Quicksand", sans-serif;
   --font-body:    "Dreaming Outloud Sans", "Quicksand", sans-serif;
-  --font-book:    Georgia, "Iowan Old Style", "Times New Roman", serif;
 
   --radius-page: 3px;
   --shadow-book: 0 30px 60px -20px rgba(0,0,0,.65), 0 10px 20px -8px rgba(0,0,0,.5);
@@ -404,32 +400,6 @@ button{
   overflow:hidden;
 }
 
-.page-inner{
-  height:100%;
-  padding: clamp(1.4rem, 4vw, 2.6rem) clamp(1.3rem, 3.6vw, 2.3rem);
-  overflow-y:auto;
-  font-family: var(--font-book);
-  font-size: clamp(.95rem, 1.4vw, 1.05rem);
-  line-height: 1.7; /* ritmo de leitura calmo, como o do Claude.ai */
-}
-.page-inner::-webkit-scrollbar{ width:6px; }
-.page-inner::-webkit-scrollbar-thumb{ background: var(--parchment-fold); border-radius:4px; }
-
-.page-inner h1, .page-inner h2, .page-inner h3{
-  font-family: var(--font-display);
-  font-weight:500;
-  color: var(--wine);
-  line-height:1.2;
-}
-.page-inner p{ margin: 0 0 1.15em; }
-.page-inner blockquote{
-  margin: 1.2em 0;
-  padding-left: 1em;
-  border-left: 2px solid var(--gold);
-  font-style: italic;
-  color: var(--text-ink-soft);
-}
-
 .page-number{
   position:absolute;
   bottom: .6rem;
@@ -453,18 +423,6 @@ button{
 }
 .page-cover .flourish{ color: var(--wine); width:90px; height:26px; }
 .page-cover h2{ font-family: var(--font-display); color: var(--wine); font-size:1.6rem; margin:0; }
-
-/* text selection & highlights inside pages */
-.page-inner ::selection{ background: rgba(122,46,61,.25); }
-
-mark.annot{
-  background: linear-gradient(180deg, transparent 60%, rgba(184,146,90,.45) 60%);
-  cursor:pointer;
-  border-radius: 1px;
-}
-mark.annot.is-active{
-  background: linear-gradient(180deg, transparent 55%, rgba(122,46,61,.4) 55%);
-}
 
 /* =========================================================
    READER BOTTOM CONTROLS
@@ -498,60 +456,8 @@ mark.annot.is-active{
 }
 
 /* =========================================================
-   COMMENT COMPOSER (popup on text selection)
+   BOTÕES
    ========================================================= */
-.comment-popup{
-  position:absolute;
-  z-index: 50;
-  background: var(--ink-soft);
-  border: 1px solid rgba(184,146,90,.4);
-  border-radius: 6px;
-  box-shadow: 0 14px 30px -8px rgba(0,0,0,.6);
-  padding: .9rem;
-  width: 260px;
-  animation: pop-in .18s var(--ease);
-}
-@keyframes pop-in{ from{ opacity:0; transform: translateY(4px) scale(.97);} to{opacity:1; transform:none;} }
-
-.comment-popup textarea{
-  width:100%;
-  min-height: 64px;
-  resize: vertical;
-  background: var(--ink);
-  color: var(--text-cream);
-  border: 1px solid rgba(184,146,90,.3);
-  border-radius:4px;
-  padding: .5rem;
-  font-family: var(--font-body);
-  font-size: .9rem;
-}
-.comment-popup input[type="text"]{
-  width:100%;
-  margin-top:.5rem;
-  background: var(--ink);
-  color: var(--text-cream);
-  border: 1px solid rgba(184,146,90,.3);
-  border-radius:4px;
-  padding: .4rem .5rem;
-  font-family: var(--font-body);
-  font-size: .82rem;
-}
-.comment-popup .quote-preview{
-  font-style: italic;
-  font-size: .78rem;
-  color: var(--wine);
-  border-left: 2px solid var(--gold);
-  padding-left: .5rem;
-  margin-bottom: .5rem;
-  max-height: 3.2em;
-  overflow:hidden;
-}
-.comment-popup .popup-actions{
-  display:flex;
-  justify-content:flex-end;
-  gap:.5rem;
-  margin-top: .6rem;
-}
 .btn{
   font-size: .82rem;
   padding: .4rem .85rem;

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartas para Iam — leitura</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+<div class="reader-page">
+
+  <header class="reader-topbar">
+    <a class="back-link" href="index.html">← estante</a>
+    <h1 class="reader-heading" id="reader-heading">Cartas para Iam<small id="reader-subheading">carregando…</small></h1>
+    <select class="chapter-select" id="chapter-select" aria-label="Ir para parte do livro"></select>
+  </header>
+
+  <div class="reader-stage" id="reader-stage">
+    <div class="book-shadow-pool"></div>
+    <div id="book-flip"></div>
+  </div>
+
+  <div class="reader-controls">
+    <button class="nav-btn" id="prev-btn" aria-label="Página anterior">‹</button>
+    <span class="reader-progress" id="reader-progress">— / —</span>
+    <button class="nav-btn" id="next-btn" aria-label="Próxima página">›</button>
+  </div>
+
+</div>
+
+<button class="marginalia-tab" id="marginalia-tab" aria-expanded="false">
+  margens<span class="count" id="marginalia-count">0</span>
+</button>
+
+<aside class="marginalia-panel" id="marginalia-panel" aria-label="Comentários desta página">
+  <div class="marginalia-head">
+    <h2>Comentários <span id="marginalia-page-label"></span></h2>
+    <button class="marginalia-close" id="marginalia-close" aria-label="Fechar">✕</button>
+  </div>
+  <div class="marginalia-list" id="marginalia-list">
+    <p class="marginalia-empty">Ainda não há comentários nesta página. Seja a primeira pessoa a escrever uma.</p>
+  </div>
+  <div class="marginalia-foot">
+    <textarea id="page-comment-text" placeholder="Comentar esta página…" maxlength="600" style="width:100%;min-height:60px;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.5rem;font-family:var(--font-body);"></textarea>
+    <input type="text" id="page-comment-name" placeholder="Seu nome (opcional)" maxlength="40" style="width:100%;margin-top:.4rem;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.4rem .5rem;font-family:var(--font-body);font-size:.85rem;">
+    <button class="btn btn-primary" id="page-comment-submit" style="margin-top:.5rem;width:100%;">comentar</button>
+    <p style="margin-top:.6rem;">Comentários são públicos e anônimos.</p>
+  </div>
+</aside>
+
+<script src="assets/vendor/pdfjs/pdf.min.js"></script>
+<script src="assets/vendor/page-flip/page-flip.browser.js"></script>
+<script type="module" src="assets/js/comments.js"></script>
+<script type="module">
+  import { initPdfReader } from './assets/js/reader-pdf.js';
+  initPdfReader({ book: 'livro', manifestUrl: 'book/manifest.json', baseFolder: 'book/' });
+</script>
+</body>
+</html>
