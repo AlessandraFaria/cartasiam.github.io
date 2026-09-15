@@ -513,6 +513,7 @@ button{
   position: fixed;
   top:0; right:0;
   height: 100vh;
+  height: 100dvh; /* acompanha o teclado virtual abrindo/fechando no celular */
   width: min(360px, 88vw);
   background: var(--ink-soft);
   border-left: 1px solid rgba(184,146,90,.3);
