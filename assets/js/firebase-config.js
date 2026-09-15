@@ -10,14 +10,23 @@
 // 4. Copie o objeto de configuração que aparece e cole abaixo
 // =====================================================================
 
-export const firebaseConfig = {
-  apiKey: "COLE_AQUI",
-  authDomain: "SEU-PROJETO.firebaseapp.com",
-  projectId: "SEU-PROJETO",
-  storageBucket: "SEU-PROJETO.appspot.com",
-  messagingSenderId: "COLE_AQUI",
-  appId: "COLE_AQUI"
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBGTAIRtkGF2XjnVZGajwDQPMhhaoZ-ZdU",
+  authDomain: "cartas-para-iam.firebaseapp.com",
+  projectId: "cartas-para-iam",
+  storageBucket: "cartas-para-iam.firebasestorage.app",
+  messagingSenderId: "310716527421",
+  appId: "1:310716527421:web:1034d1ea6d1ed9d73ccb54"
 };
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
 
 // Nome da coleção do Firestore onde os comentários ficam guardados.
 // Não precisa mexer aqui.
