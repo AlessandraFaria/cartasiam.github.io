@@ -95,6 +95,8 @@ button{
   clip: rect(0 0 0 0); white-space:nowrap;
 }
 
+.is-hidden{ display:none !important; }
+
 /* =========================================================
    ORNAMENT (SVG flourish used sparingly — covers + dividers)
    ========================================================= */
@@ -598,6 +600,175 @@ button{
 }
 
 /* =========================================================
+   ESTANTE DE CADERNOS (anotacoes.html)
+   ========================================================= */
+.notebook-shelf{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  display:flex;
+  flex-wrap:wrap;
+  align-content:flex-start;
+  justify-content:center;
+  gap: clamp(1rem, 3vw, 1.8rem);
+  padding: clamp(1.6rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem) 3rem;
+}
+
+.notebook-card{
+  position:relative;
+  width: 156px;
+  height: 214px;
+  border-radius: 4px 8px 8px 4px;
+  background: linear-gradient(155deg, var(--rust) 0%, var(--rust-dim) 100%);
+  box-shadow: var(--shadow-book);
+  padding: 0 .9rem 0 18px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  cursor:pointer;
+  border:none;
+  font-family: inherit;
+  transition: transform .22s var(--ease), box-shadow .22s var(--ease);
+}
+.notebook-card::before{
+  content:"";
+  position:absolute; left:2px; top:9px; bottom:9px; width:12px;
+  background-image: repeating-linear-gradient(180deg, transparent 0 5px, rgba(20,10,7,.6) 5px 8px);
+  opacity:.85;
+}
+.notebook-card:hover, .notebook-card:focus-visible{
+  transform: translateY(-6px);
+  box-shadow: 0 30px 50px -16px rgba(0,0,0,.6);
+}
+.notebook-card .word{
+  position:relative; z-index:2;
+  color: var(--cream);
+  font-size: .95rem;
+  font-weight:600;
+  letter-spacing:.05em;
+  line-height:1.5;
+}
+
+/* =========================================================
+   GALERIA (ilustracoes.html)
+   ========================================================= */
+.gallery-stage{
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  padding: clamp(1rem, 3vw, 2rem);
+}
+.gallery-grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: clamp(.6rem, 2vw, 1.1rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.gallery-item{
+  position:relative;
+  aspect-ratio: 3/4;
+  overflow:hidden;
+  border-radius:4px;
+  cursor:pointer;
+  background:#fff;
+  box-shadow: 0 10px 24px -12px rgba(0,0,0,.35);
+  border:none;
+  padding:0;
+  transition: transform .2s var(--ease), box-shadow .2s var(--ease);
+}
+.gallery-item:hover, .gallery-item:focus-visible{
+  transform: translateY(-3px);
+  box-shadow: 0 16px 32px -12px rgba(0,0,0,.45);
+}
+.gallery-item img{
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+.gallery-item-num{
+  position:absolute; bottom:.4rem; right:.5rem;
+  font-size:.68rem; color:#fff;
+  background:rgba(0,0,0,.5); padding:.1rem .45rem; border-radius:3px;
+  font-style: italic;
+}
+
+/* =========================================================
+   VISUALIZADOR AMPLIADO (lightbox da galeria)
+   ========================================================= */
+.lightbox{
+  position:fixed; inset:0;
+  background: rgba(24,10,10,.94);
+  z-index:100;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+}
+.lightbox-topbar{
+  flex:0 0 auto;
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  padding: 1rem clamp(1rem,3vw,2rem);
+}
+.lightbox-close{
+  width:40px; height:40px; border-radius:50%;
+  background:rgba(255,255,255,.08); color:#fff;
+  border:1px solid rgba(255,255,255,.28);
+  font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+}
+.lightbox-close:hover{ background:rgba(255,255,255,.18); }
+
+.lightbox-stage{
+  flex: 1 1 auto;
+  min-height: 0;
+  width:100%;
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:auto;
+  padding: 0 clamp(3rem, 8vw, 5rem);
+}
+.lightbox-stage img{
+  max-width:100%;
+  max-height:100%;
+  box-shadow: 0 30px 60px -20px rgba(0,0,0,.6);
+}
+.lightbox-prev, .lightbox-next{
+  position:absolute; top:50%; transform:translateY(-50%);
+  width:44px; height:44px; border-radius:50%;
+  background:rgba(255,255,255,.08); color:#fff;
+  border:1px solid rgba(255,255,255,.28);
+  font-size:1.3rem;
+  display:flex; align-items:center; justify-content:center;
+  z-index:5;
+}
+.lightbox-prev:hover:not(:disabled), .lightbox-next:hover:not(:disabled){ background:rgba(255,255,255,.18); }
+.lightbox-prev:disabled, .lightbox-next:disabled{ opacity:.25; cursor:default; }
+.lightbox-prev{ left: clamp(.5rem, 2vw, 1.5rem); }
+.lightbox-next{ right: clamp(.5rem, 2vw, 1.5rem); }
+
+.lightbox-controls{
+  flex: 0 0 auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap: 1.2rem;
+  padding: 1rem 1rem 1.4rem;
+  color: var(--text-cream-dim);
+}
+.lightbox-controls .zoom-btn{
+  border-color: rgba(255,255,255,.3);
+  color:#fff;
+}
+.lightbox-controls .zoom-btn:hover:not(:disabled){ background: rgba(255,255,255,.12); }
+.lightbox-controls .zoom-level, .lightbox-controls .reader-progress{ color: rgba(255,253,208,.75); }
+.lightbox-controls .btn-ghost{ color:#fff; border-color: rgba(255,255,255,.3); }
+.lightbox-controls .btn-ghost:hover{ background: rgba(255,255,255,.12); }
+
+/* =========================================================
    RESPONSIVE
    ========================================================= */
 @media (max-width: 720px){
@@ -613,4 +784,8 @@ button{
   .controls-group{ gap:.4rem; }
   .nav-btn, .zoom-btn{ width:34px; height:34px; font-size:.95rem; }
   .reader-progress{ font-size:.76rem; min-width:7ch; }
+
+  .notebook-card{ width: 132px; height: 182px; }
+  .lightbox-stage{ padding: 0 3.2rem; }
+  .lightbox-controls{ flex-wrap:wrap; gap:.7rem; }
 }

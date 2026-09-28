@@ -1,34 +1,40 @@
 # Cartas para Iam — site
 
-Três livros que se folheiam no navegador — o livro principal, as anotações da autora e as ilustrações — todos em PDF. Qualquer pessoa pode comentar a página que está lendo, e o comentário fica público e visível para quem visitar depois.
+Três volumes que abrem no navegador — o livro principal, os cadernos de anotações da autora e a galeria de ilustrações — todos a partir de PDFs. Qualquer pessoa pode comentar a página (ou ilustração) que está vendo, e o comentário fica público e visível para quem visitar depois.
 
 Feito para ser hospedado de graça no **GitHub Pages** — não precisa de servidor próprio.
+
+## Como é cada volume
+
+- **Livro** (`livro.html`): leitor de rolagem contínua com zoom, como um leitor de PDF simples — vai descendo pelas páginas do livro.
+- **Anotações da autora** (`anotacoes.html`): uma **estante de cadernos**. Cada PDF cadastrado em `notes/` vira uma capa clicável; clicar abre aquele caderno no mesmo leitor de rolagem com zoom do livro. É pensado pra você ir adicionando cadernos novos aos poucos.
+- **Ilustrações** (`ilustracoes.html`): uma **galeria**. Todas as páginas de todos os PDFs cadastrados em `illustrations/` aparecem juntas numa grade de miniaturas; clicar numa delas abre um visualizador ampliado com zoom e navegação entre as ilustrações.
 
 ## Identidade visual
 
 - **Cor de fundo**: `#F1C9D2` (o rosa da arte da página inicial) — é o fundo do site inteiro, inclusive dentro dos leitores.
 - **Imagem de topo da página inicial**: `assets/img/hero-capa.jpg` — a arte com o título, o laço e os elementos decorativos. Pra trocar, substitua o arquivo (mesmo nome) ou atualize o `src` em `index.html`. O título e o subtítulo também existem como texto real (invisível, sobre a imagem) para acessibilidade e buscadores — atualize os dois em conjunto se mudar o texto.
 - **Capa do livro** (usada só na estante da página inicial): a imagem real está em `assets/img/capa-livro.jpg`.
-- **Acentos**: bordô `#540418` (títulos, botões, capa), rust `#9C4C33` (caderno de anotações) e dourado `#B8925A` (frisos), todos tirados das referências que você mandou.
+- **Acentos**: bordô `#540418` (títulos, botões, capa), rust `#9C4C33` (cadernos de anotações) e dourado `#B8925A` (frisos), todos tirados das referências que você mandou.
 - **Fonte**: Dreaming Outloud Sans (principal, usada em quase tudo, ainda precisa dos arquivos — veja `assets/fonts/README.md`). O texto de dentro dos PDFs usa a fonte que estiver em cada arquivo.
 
 ## Estrutura das pastas
 
 ```
 ├── index.html                → estante com os três volumes
-├── livro.html                 → leitor do livro principal (PDF)
-├── anotacoes.html              → leitor das anotações da autora (PDF)
-├── ilustracoes.html            → leitor das ilustrações (PDF)
+├── livro.html                 → leitor do livro principal (rolagem + zoom)
+├── anotacoes.html              → estante de cadernos de anotações
+├── ilustracoes.html            → galeria de ilustrações
 │
 ├── book/                      ← VOCÊ EDITA: PDF do livro principal
 │   ├── manifest.json
 │   └── (seu arquivo .pdf aqui)
 │
-├── notes/                     ← VOCÊ EDITA: PDFs das anotações da autora
+├── notes/                     ← VOCÊ EDITA: um PDF por caderno de anotações
 │   ├── manifest.json
 │   └── (seus arquivos .pdf aqui)
 │
-├── illustrations/             ← VOCÊ EDITA: PDFs das ilustrações
+├── illustrations/             ← VOCÊ EDITA: PDFs das ilustrações (viram a galeria)
 │   ├── manifest.json
 │   └── (seus arquivos .pdf aqui)
 │
@@ -36,16 +42,16 @@ Feito para ser hospedado de graça no **GitHub Pages** — não precisa de servi
 └── firestore.rules            (regras de segurança do banco de comentários)
 ```
 
-## Como adicionar um PDF (livro, anotações ou ilustrações)
+## Como adicionar um PDF (livro, cadernos ou ilustrações)
 
 1. Coloque o arquivo `.pdf` dentro de `book/`, `notes/` ou `illustrations/`, dependendo de qual dos três volumes é.
 2. Cadastre-o no `manifest.json` da mesma pasta. Veja o `README.md` dentro de cada uma delas para o formato exato.
 
-Cada página do PDF vira uma página folheável automaticamente — nenhuma conversão manual é necessária. Se o PDF do livro já tiver uma página de capa, ela aparece normalmente como a primeira página.
+Cada página do PDF vira uma página (ou, no caso das ilustrações, uma miniatura na galeria) automaticamente — nenhuma conversão manual é necessária.
 
 ## Como funcionam os comentários
 
-Em qualquer um dos três volumes, quem estiver lendo pode escrever um comentário sobre a página em que está — o comentário aparece pra todo mundo que abrir essa mesma página depois (não precisa de login, é público e anônimo). O botão **"margens"** na lateral direita abre o painel de comentários daquela página.
+Em qualquer um dos três volumes, quem estiver lendo pode escrever um comentário sobre a página (ou ilustração) em que está — o comentário aparece pra todo mundo que abrir essa mesma página depois (não precisa de login, é público e anônimo). O botão **"margens"** na lateral direita abre o painel de comentários. Na galeria de ilustrações, esse botão só aparece com uma ilustração aberta no visualizador ampliado.
 
 ## Configurar o banco de comentários
 
@@ -107,9 +113,9 @@ Sempre que você adicionar ou trocar um PDF, basta enviar (`git push`) as mudan�
 
 ## Como funciona (por trás dos panos)
 
-- **Folhear páginas**: biblioteca `page-flip`, incluída localmente em `assets/vendor/`.
-- **PDFs → páginas**: `pdf.js`, renderiza cada página do PDF como imagem no navegador de quem visita — não precisa de conversão prévia.
-- **Tamanho da página**: o livro sempre ocupa o maior espaço possível na tela de quem lê, sem precisar rolar a página do navegador.
+- **PDFs → imagens**: `pdf.js`, renderiza cada página do PDF no navegador de quem visita — não precisa de conversão prévia.
+- **Rolagem com zoom** (livro e cadernos): `assets/js/reader-scroll-core.js` — um núcleo compartilhado entre o livro e cada caderno individual.
+- **Galeria** (ilustrações): `assets/js/reader-gallery.js` — junta as páginas de todos os PDFs cadastrados numa grade só.
 - Nenhuma dessas bibliotecas depende de internet além do próprio GitHub Pages — só as fontes (Google Fonts) e o Firebase precisam de conexão externa.
 
 ## Limitações conhecidas

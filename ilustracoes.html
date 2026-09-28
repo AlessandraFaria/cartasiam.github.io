@@ -16,42 +16,47 @@
   <header class="reader-topbar">
     <a class="back-link" href="index.html">← estante</a>
     <h1 class="reader-heading" id="reader-heading">Ilustrações<small id="reader-subheading">carregando…</small></h1>
-    <select class="chapter-select" id="chapter-select" aria-label="Ir para documento"></select>
+    <span aria-hidden="true"></span>
   </header>
 
-  <div class="reader-stage" id="reader-stage">
-    <div class="pdf-scroll" id="pdf-scroll"></div>
-  </div>
-
-  <div class="reader-controls">
-    <div class="controls-group">
-      <button class="nav-btn" id="prev-btn" aria-label="Página anterior">‹</button>
-      <span class="reader-progress" id="reader-progress">— / —</span>
-      <button class="nav-btn" id="next-btn" aria-label="Próxima página">›</button>
-    </div>
-    <div class="controls-group">
-      <button class="zoom-btn" id="zoom-out" aria-label="Diminuir zoom">−</button>
-      <span class="zoom-level" id="zoom-level">100%</span>
-      <button class="zoom-btn" id="zoom-in" aria-label="Aumentar zoom">+</button>
-    </div>
+  <div class="gallery-stage" id="reader-stage">
+    <div class="gallery-grid" id="gallery-grid"></div>
   </div>
 
 </div>
 
-<button class="marginalia-tab" id="marginalia-tab" aria-expanded="false">
+<div class="lightbox is-hidden" id="lightbox">
+  <div class="lightbox-topbar">
+    <button class="lightbox-close" id="lightbox-close" aria-label="Fechar">✕</button>
+  </div>
+  <div class="lightbox-stage">
+    <button class="lightbox-prev" id="lightbox-prev" aria-label="Ilustração anterior">‹</button>
+    <img id="lightbox-img" src="" alt="">
+    <button class="lightbox-next" id="lightbox-next" aria-label="Próxima ilustração">›</button>
+  </div>
+  <div class="lightbox-controls">
+    <button class="zoom-btn" id="lb-zoom-out" aria-label="Diminuir zoom">−</button>
+    <span class="zoom-level" id="lb-zoom-level">100%</span>
+    <button class="zoom-btn" id="lb-zoom-in" aria-label="Aumentar zoom">+</button>
+    <span class="reader-progress" id="lb-progress">— / —</span>
+    <button class="btn btn-ghost" id="lb-comment-btn" type="button">comentar</button>
+  </div>
+</div>
+
+<button class="marginalia-tab is-hidden" id="marginalia-tab" aria-expanded="false">
   margens<span class="count" id="marginalia-count">0</span>
 </button>
 
-<aside class="marginalia-panel" id="marginalia-panel" aria-label="Comentários desta página">
+<aside class="marginalia-panel" id="marginalia-panel" aria-label="Comentários desta ilustração">
   <div class="marginalia-head">
     <h2>Comentários <span id="marginalia-page-label"></span></h2>
     <button class="marginalia-close" id="marginalia-close" aria-label="Fechar">✕</button>
   </div>
   <div class="marginalia-list" id="marginalia-list">
-    <p class="marginalia-empty">Ainda não há comentários nesta página. Seja a primeira pessoa a escrever uma.</p>
+    <p class="marginalia-empty">Ainda não há comentários nesta ilustração. Seja a primeira pessoa a escrever uma.</p>
   </div>
   <div class="marginalia-foot">
-    <textarea id="page-comment-text" placeholder="Comentar esta página…" maxlength="600" style="width:100%;min-height:60px;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.5rem;font-family:var(--font-body);"></textarea>
+    <textarea id="page-comment-text" placeholder="Comentar esta ilustração…" maxlength="600" style="width:100%;min-height:60px;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.5rem;font-family:var(--font-body);"></textarea>
     <input type="text" id="page-comment-name" placeholder="Seu nome (opcional)" maxlength="40" style="width:100%;margin-top:.4rem;background:var(--ink);color:var(--text-cream);border:1px solid rgba(184,146,90,.3);border-radius:4px;padding:.4rem .5rem;font-family:var(--font-body);font-size:.85rem;">
     <button class="btn btn-primary" id="page-comment-submit" style="margin-top:.5rem;width:100%;">comentar</button>
     <p style="margin-top:.6rem;">Comentários são públicos e anônimos.</p>
@@ -61,8 +66,8 @@
 <script src="assets/vendor/pdfjs/pdf.min.js"></script>
 <script type="module" src="assets/js/comments.js"></script>
 <script type="module">
-  import { initPdfReader } from './assets/js/reader-pdf.js';
-  initPdfReader({ book: 'ilustracoes', manifestUrl: 'illustrations/manifest.json', baseFolder: 'illustrations/' });
+  import { initGallery } from './assets/js/reader-gallery.js';
+  initGallery({ book: 'ilustracoes', manifestUrl: 'illustrations/manifest.json', baseFolder: 'illustrations/' });
 </script>
 </body>
 </html>
